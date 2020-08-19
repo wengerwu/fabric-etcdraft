@@ -5,7 +5,7 @@ services:
   51nca:
     container_name: 51nca
     image: hyperledger/fabric-ca:latest
-    command: sh -c 'fabric-ca-server start -d -b 51nca:iamFengWu5523783 --cfg.affiliations.allowremove --cfg.identities.allowremove --port 7057'
+    command: sh -c 'fabric-ca-server start -d -b 51nca:123456 --cfg.affiliations.allowremove --cfg.identities.allowremove --port 7057'
     environment:
       - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_TLS_ENABLED=false
