@@ -1,0 +1,695 @@
+mkdir rootca-server
+fabric-ca-server init -b rootca:123456 --home ./rootca-server --cfg.affiliations.allowremove --cfg.identities.allowremove 
+
+fabric-ca-server start -b rootca:123456 --home ./rootca-server --cfg.affiliations.allowremove --cfg.identities.allowremove 
+
+
+fabric-ca-server init -b ordersca:123456 -u http://rootca:123456@localhost:7054 --home ./ordersca-server --cfg.affiliations.allowremove --cfg.identities.allowremove 
+
+
+
+fabric-ca-client enroll -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+fabric-ca-client affiliation list -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+
+fabric-ca-client affiliation remove --force org1 -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+
+fabric-ca-client affiliation add com -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+fabric-ca-client affiliation add com.fabrichain -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+
+fabric-ca-client register --id.name Admin@fabrichain.com --id.type client --id.affiliation "com.fabrichain" --id.attrs '"hf.Registrar.Roles=client,orderer,peer,user","hf.Registrar.DelegateRoles=client,orderer,peer,user",hf.Registrar.Attributes=*,hf.GenCRL=true,hf.Revoker=true,hf.AffiliationMgr=true,hf.IntermediateCA=true,role=admin:ecert' --id.secret=123456 --csr.cn=fabrichain.com --csr.hosts=['fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+
+fabric-ca-client enroll -u http://Admin@fabrichain.com:123456@localhost:7055 --csr.cn=fabrichain.com --csr.hosts=['fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/msp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/msp/admincerts
+
+mkdir -p ca-client/crypto-config/ordererOrganizations/fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/msp/admincerts
+
+fabric-ca-client register --id.name orderer.fabrichain.com --id.type orderer --id.affiliation "com.fabrichain" --id.attrs '"role=orderer",ecert=true' --id.secret=123456 --csr.cn=orderer.fabrichain.com --csr.hosts=['orderer.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+fabric-ca-client enroll -u http://orderer.fabrichain.com:123456@localhost:7055 --csr.cn=orderer.fabrichain.com --csr.hosts=['orderer.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/msp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/msp/admincerts
+
+
+
+fabric-ca-client register --id.name orderer2.fabrichain.com --id.type orderer --id.affiliation "com.fabrichain" --id.attrs '"role=orderer",ecert=true' --id.secret=123456 --csr.cn=orderer2.fabrichain.com --csr.hosts=['orderer2.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+
+fabric-ca-client enroll -u http://orderer2.fabrichain.com:123456@localhost:7055 --csr.cn=orderer2.fabrichain.com --csr.hosts=['orderer2.fabrichain.com']  -M crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/msp --home ca-client
+
+
+mkdir ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/msp/admincerts
+
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/msp/admincerts
+
+
+fabric-ca-client register --id.name orderer3.fabrichain.com --id.type orderer --id.affiliation "com.fabrichain" --id.attrs '"role=orderer",ecert=true' --id.secret=123456 --csr.cn=orderer3.fabrichain.com --csr.hosts=['orderer3.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+fabric-ca-client enroll -u http://orderer3.fabrichain.com:123456@localhost:7055 --csr.cn=orderer3.fabrichain.com --csr.hosts=['orderer3.fabrichain.com']  -M crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/msp --home ca-client
+
+
+mkdir ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/msp/admincerts
+
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/msp/admincerts
+
+
+fabric-ca-client register --id.name orderer4.fabrichain.com --id.type orderer --id.affiliation "com.fabrichain" --id.attrs '"role=orderer",ecert=true' --id.secret=123456 --csr.cn=orderer4.fabrichain.com --csr.hosts=['orderer4.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+fabric-ca-client enroll -u http://orderer4.fabrichain.com:123456@localhost:7055 --csr.cn=orderer4.fabrichain.com --csr.hosts=['orderer4.fabrichain.com']  -M crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/msp --home ca-client
+
+
+mkdir ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/msp/admincerts
+
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/msp/admincerts
+
+
+
+
+fabric-ca-client register --id.name orderer5.fabrichain.com --id.type orderer --id.affiliation "com.fabrichain" --id.attrs '"role=orderer",ecert=true' --id.secret=123456 --csr.cn=orderer5.fabrichain.com --csr.hosts=['orderer5.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/msp -u http://ordersca:123456@localhost:7055 --home ca-client
+
+fabric-ca-client enroll -u http://orderer5.fabrichain.com:123456@localhost:7055 --csr.cn=orderer5.fabrichain.com --csr.hosts=['orderer5.fabrichain.com']  -M crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/msp --home ca-client
+
+
+mkdir ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/msp/admincerts
+
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/msp/admincerts
+
+
+
+
+
+order5个上面的msp
+----------------------------------------
+order5个上面的tls
+
+fabric-ca-server init -b ordersca:123456 -u http://rootca:123456@localhost:7054 --home ./orderstls-server --cfg.affiliations.allowremove --cfg.identities.allowremove 
+
+
+fabric-ca-client enroll -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+
+fabric-ca-client affiliation list -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+fabric-ca-client affiliation remove --force org1 -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+fabric-ca-client affiliation remove --force org2 -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+fabric-ca-client affiliation add com -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+fabric-ca-client affiliation add com.fabrichain -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+
+fabric-ca-client register --id.name Admin@fabrichain.com --id.type client --id.affiliation "com.fabrichain" --id.attrs '"hf.Registrar.Roles=client,orderer,peer,user","hf.Registrar.DelegateRoles=client,orderer,peer,user",hf.Registrar.Attributes=*,hf.GenCRL=true,hf.Revoker=true,hf.AffiliationMgr=true,hf.IntermediateCA=true,role=admin:ecert' --id.secret=123456 --csr.cn=fabrichain.com --csr.hosts=['fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://Admin@fabrichain.com:123456@localhost:8055  --csr.cn=fabrichain.com --csr.hosts=['fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tls
+
+cp orderstls-server/ca-chain.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tls/client.crt
+
+mkdir -p ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tlstmp/keystore
+
+path=ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tlstmp/keystore
+
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tls/client.key
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tlstmp/tlscacerts ca-client/crypto-config/ordererOrganizations/fabrichain.com/msp
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/users/Admin@fabrichain.com/tlstmp/tlsintermediatecerts ca-client/crypto-config/ordererOrganizations/fabrichain.com/msp
+
+
+
+
+
+
+fabric-ca-client register --id.name orderer.fabrichain.com --id.type orderer --id.affiliation "com.fabrichain" --id.attrs '"role=orderer",ecert=true' --id.secret=123456 --csr.cn=orderer.fabrichain.com --csr.hosts=['orderer.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://orderer.fabrichain.com:123456@localhost:8055 --csr.cn=orderer.fabrichain.com --csr.hosts=['orderer.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/tls
+
+cp orderstls-server/ca-chain.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/tls/server.crt
+
+path=ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/tlstmp/keystore
+
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/tls/server.key
+
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/tlstmp/tlscacerts ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/msp
+
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/tlstmp/tlsintermediatecerts  ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer.fabrichain.com/msp
+
+
+
+
+
+fabric-ca-client register --id.name orderer2.fabrichain.com --id.type orderer --id.affiliation "com.fabrichain" --id.attrs '"role=orderer",ecert=true' --id.secret=123456 --csr.cn=orderer2.fabrichain.com --csr.hosts=['orderer2.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://orderer2.fabrichain.com:123456@localhost:8055 --csr.cn=orderer2.fabrichain.com --csr.hosts=['orderer2.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/tls
+
+cp orderstls-server/ca-chain.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/tls/server.crt
+
+path=ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/tlstmp/keystore
+
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/tls/server.key
+
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/tlstmp/tlscacerts ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/msp
+
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/tlstmp/tlsintermediatecerts  ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer2.fabrichain.com/msp
+
+
+
+
+
+fabric-ca-client register --id.name orderer3.fabrichain.com --id.type orderer --id.affiliation "com.fabrichain" --id.attrs '"role=orderer",ecert=true' --id.secret=123456 --csr.cn=orderer3.fabrichain.com --csr.hosts=['orderer3.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://orderer3.fabrichain.com:123456@localhost:8055 --csr.cn=orderer3.fabrichain.com --csr.hosts=['orderer3.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/tls
+
+cp orderstls-server/ca-chain.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/tls/server.crt
+
+path=ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/tlstmp/keystore
+
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/tls/server.key
+
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/tlstmp/tlscacerts ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/msp
+
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/tlstmp/tlsintermediatecerts  ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer3.fabrichain.com/msp
+
+
+
+
+
+fabric-ca-client register --id.name orderer4.fabrichain.com --id.type orderer --id.affiliation "com.fabrichain" --id.attrs '"role=orderer",ecert=true' --id.secret=123456 --csr.cn=orderer4.fabrichain.com --csr.hosts=['orderer4.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://orderer4.fabrichain.com:123456@localhost:8055 --csr.cn=orderer4.fabrichain.com --csr.hosts=['orderer4.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/tls
+
+cp orderstls-server/ca-chain.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/tls/server.crt
+
+path=ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/tlstmp/keystore
+
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/tls/server.key
+
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/tlstmp/tlscacerts ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/msp
+
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/tlstmp/tlsintermediatecerts  ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer4.fabrichain.com/msp
+
+
+
+
+fabric-ca-client register --id.name orderer5.fabrichain.com --id.type orderer --id.affiliation "com.fabrichain" --id.attrs '"role=orderer",ecert=true' --id.secret=123456 --csr.cn=orderer5.fabrichain.com --csr.hosts=['orderer5.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/tlstmp -u http://ordersca:123456@localhost:8055 --home ca-client
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://orderer5.fabrichain.com:123456@localhost:8055 --csr.cn=orderer5.fabrichain.com --csr.hosts=['orderer5.fabrichain.com'] -M crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/tls
+
+cp orderstls-server/ca-chain.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/tls/server.crt
+
+path=ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/tlstmp/keystore
+
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+cp ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/tls/server.key
+
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/tlstmp/tlscacerts ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/msp
+
+cp -r ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/tlstmp/tlsintermediatecerts  ca-client/crypto-config/ordererOrganizations/fabrichain.com/orderers/orderer5.fabrichain.com/msp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fabric-ca-client register --id.name peer0.PayBF.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.PayBF" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer0.PayBF.fabrichain.com --csr.hosts=['peer0.PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/msp -u http://PayBFca:123456@localhost:7056 --home ca-client
+
+
+fabric-ca-client enroll -u http://peer0.PayBF.fabrichain.com:123456@localhost:7056 --csr.cn=peer0.PayBF.fabrichain.com --csr.hosts=['peer0.PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/msp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/msp/admincerts
+
+
+
+fabric-ca-client register --id.name peer1.PayBF.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.PayBF" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer1.PayBF.fabrichain.com --csr.hosts=['peer1.PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/msp -u http://PayBFca:123456@localhost:7056 --home ca-client
+
+fabric-ca-client enroll -u http://peer1.PayBF.fabrichain.com:123456@localhost:7056 --csr.cn=peer1.PayBF.fabrichain.com --csr.hosts=['peer1.PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/msp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/msp/admincerts
+
+
+
+fabric-ca-server init -b PayBFca:123456 -u http://rootca:123456@localhost:7054 --home ./PayBFcatls-server --cfg.affiliations.allowremove --cfg.identities.allowremove 
+
+
+
+fabric-ca-client enroll --csr.cn=PayBF.fabrichain.com --csr.hosts=['PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+
+
+fabric-ca-client affiliation list -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+fabric-ca-client affiliation remove --force org1 -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+fabric-ca-client affiliation remove --force org2 -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+fabric-ca-client affiliation add com -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+fabric-ca-client affiliation add com.fabrichain -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+fabric-ca-client affiliation add com.fabrichain.PayBF -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+
+
+fabric-ca-client register --id.name Admin@PayBF.fabrichain.com --id.type client --id.affiliation "com.fabrichain.PayBF" --id.attrs '"hf.Registrar.Roles=client,orderer,peer,user","hf.Registrar.DelegateRoles=client,orderer,peer,user",hf.Registrar.Attributes=*,hf.GenCRL=true,hf.Revoker=true,hf.AffiliationMgr=true,hf.IntermediateCA=true,role=admin:ecert' --id.secret=123456 --csr.cn=PayBF.fabrichain.com --csr.hosts=['PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://Admin@PayBF.fabrichain.com:123456@localhost:8056 --csr.cn=PayBF.fabrichain.com --csr.hosts=['PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/tlstmp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/tls
+
+cp PayBFcatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/tls/client.crt
+
+
+path=ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/tls/client.key
+
+
+
+fabric-ca-client register --id.name peer0.PayBF.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.PayBF" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer0.PayBF.fabrichain.com --csr.hosts=['peer0.PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://peer0.PayBF.fabrichain.com:123456@localhost:8056 --csr.cn=peer0.PayBF.fabrichain.com --csr.hosts=['peer0.PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/tlstmp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/tls
+
+cp PayBFcatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/tls/server.crt
+
+
+path=ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer0.PayBF.fabrichain.com/tls/server.key
+
+
+fabric-ca-client register --id.name peer1.PayBF.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.PayBF" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer1.PayBF.fabrichain.com --csr.hosts=['peer1.PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://peer1.PayBF.fabrichain.com:123456@localhost:8056 --csr.cn=peer1.PayBF.fabrichain.com --csr.hosts=['peer1.PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/tls
+
+cp PayBFcatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/tls/server.crt
+
+path=ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer1.PayBF.fabrichain.com/tls/server.key
+
+
+
+
+
+
+fabric-ca-server init -b 51nca:123456 -u http://rootca:123456@localhost:7054 --home ./51nca-server --cfg.affiliations.allowremove --cfg.identities.allowremove 
+
+
+fabric-ca-client enroll --csr.cn=51n.fabrichain.com --csr.hosts=['51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+
+path=ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/msp/config.yaml
+
+echo "NodeOUs:"&>$path
+echo "  Enable: true"&>>$path
+echo "  ClientOUIdentifier:"&>>$path
+echo "    Certificate: intermediatecerts/localhost-7057.pem"&>>$path
+echo "    OrganizationalUnitIdentifier: client"&>>$path
+echo "  PeerOUIdentifier:"&>>$path
+echo "    Certificate: intermediatecerts/localhost-7057.pem"&>>$path
+echo "    OrganizationalUnitIdentifier: peer"&>>$path
+
+
+fabric-ca-client affiliation list -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+fabric-ca-client affiliation remove --force org1 -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+fabric-ca-client affiliation remove --force org2 -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+fabric-ca-client affiliation add com -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+fabric-ca-client affiliation add com.fabrichain -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+fabric-ca-client affiliation add com.fabrichain.51n -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+
+
+fabric-ca-client register --id.name Admin@51n.fabrichain.com --id.type client --id.affiliation "com.fabrichain.51n" --id.attrs '"hf.Registrar.Roles=client,orderer,peer,user","hf.Registrar.DelegateRoles=client,orderer,peer,user",hf.Registrar.Attributes=*,hf.GenCRL=true,hf.Revoker=true,hf.AffiliationMgr=true,hf.IntermediateCA=true,role=admin:ecert' --id.secret=123456 --csr.cn=51n.fabrichain.com --csr.hosts=['51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+
+fabric-ca-client enroll -u http://Admin@51n.fabrichain.com:123456@localhost:7057 --csr.cn=51n.fabrichain.com --csr.hosts=['51n.fabrichain.com']  -M crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/msp --home ca-client
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/msp/admincerts
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/msp/admincerts
+
+fabric-ca-client register --id.name peer0.51n.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.51n" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer0.51n.fabrichain.com --csr.hosts=['peer0.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+
+fabric-ca-client enroll -u http://peer0.51n.fabrichain.com:123456@localhost:7057 --csr.cn=peer0.51n.fabrichain.com --csr.hosts=['peer0.51n.fabrichain.com']  -M crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/msp --home ca-client
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/msp/admincerts
+
+
+fabric-ca-client register --id.name peer1.51n.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.51n" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer1.51n.fabrichain.com --csr.hosts=['peer1.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+
+fabric-ca-client enroll -u http://peer1.51n.fabrichain.com:123456@localhost:7057 --csr.cn=peer1.51n.fabrichain.com --csr.hosts=['peer1.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/msp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/msp/admincerts
+
+
+
+fabric-ca-server init -b 51nca:123456 -u http://rootca:123456@localhost:7054 --home ./51ncatls-server --cfg.affiliations.allowremove --cfg.identities.allowremove 
+
+fabric-ca-client enroll --csr.cn=51n.fabrichain.com --csr.hosts=['51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+
+
+fabric-ca-client affiliation list -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+fabric-ca-client affiliation remove --force org1 -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+fabric-ca-client affiliation remove --force org2 -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+fabric-ca-client affiliation add com -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+fabric-ca-client affiliation add com.fabrichain -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+fabric-ca-client affiliation add com.fabrichain.51n -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+
+
+fabric-ca-client register --id.name Admin@51n.fabrichain.com --id.type client --id.affiliation "com.fabrichain.51n" --id.attrs '"hf.Registrar.Roles=client,orderer,peer,user","hf.Registrar.DelegateRoles=client,orderer,peer,user",hf.Registrar.Attributes=*,hf.GenCRL=true,hf.Revoker=true,hf.AffiliationMgr=true,hf.IntermediateCA=true,role=admin:ecert' --id.secret=123456 --csr.cn=51n.fabrichain.com --csr.hosts=['51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://Admin@51n.fabrichain.com:123456@localhost:8057 --csr.cn=51n.fabrichain.com --csr.hosts=['51n.fabrichain.com']  -M crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/tlstmp --home ca-client
+
+
+mkdir ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/tls  -p
+
+cp 51ncatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/tls/client.crt
+
+
+path=ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/tls/client.key
+
+
+fabric-ca-client register --id.name peer0.51n.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.51n" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer0.51n.fabrichain.com --csr.hosts=['peer0.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://peer0.51n.fabrichain.com:123456@localhost:8057 --csr.cn=peer0.51n.fabrichain.com --csr.hosts=['peer0.51n.fabrichain.com']  -M crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/tls
+
+cp 51ncatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/tls/server.crt
+
+path=ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer0.51n.fabrichain.com/tls/server.key
+
+
+
+fabric-ca-client register --id.name peer1.51n.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.51n" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer1.51n.fabrichain.com --csr.hosts=['peer1.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://peer1.51n.fabrichain.com:123456@localhost:8057 --csr.cn=peer1.51n.fabrichain.com --csr.hosts=['peer1.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/tls
+
+cp 51ncatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/tls/server.crt
+
+path=ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer1.51n.fabrichain.com/tls/server.key
+
+
+
+
+
+注册PayBF组织用户：User1  （MSP）
+
+PayBF.fabrichain.com
+
+
+
+fabric-ca-client register --id.name User1@PayBF.fabrichain.com --id.type client --id.affiliation "com.fabrichain.PayBF" --id.attrs '"hf.Registrar.Roles=client,orderer,peer,user","hf.Registrar.DelegateRoles=client,orderer,peer,user",hf.Registrar.Attributes=*,hf.GenCRL=true,hf.Revoker=true,hf.AffiliationMgr=true,hf.IntermediateCA=true,role=client:ecert' --id.secret=123456 --csr.cn=PayBF.fabrichain.com --csr.hosts=['PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/msp -u http://PayBFca:123456@localhost:7056 --home ca-client
+
+fabric-ca-client enroll -u http://User1@PayBF.fabrichain.com:123456@localhost:7056 --csr.cn=PayBF.fabrichain.com --csr.hosts=['PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/msp --home ca-client
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/msp/admincerts
+
+
+
+
+(TLS)
+fabric-ca-client register --id.name User1@PayBF.fabrichain.com --id.type client --id.affiliation "com.fabrichain.PayBF" --id.attrs '"hf.Registrar.Roles=client,orderer,peer,user","hf.Registrar.DelegateRoles=client,orderer,peer,user",hf.Registrar.Attributes=*,hf.GenCRL=true,hf.Revoker=true,hf.AffiliationMgr=true,hf.IntermediateCA=true,role=client:ecert' --id.secret=123456 --csr.cn=PayBF.fabrichain.com --csr.hosts=['PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://User1@PayBF.fabrichain.com:123456@localhost:8056 --csr.cn=PayBF.fabrichain.com --csr.hosts=['PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/tls
+
+cp PayBFcatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/tls/client.crt
+path=ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/User1@PayBF.fabrichain.com/tls/client.key
+
+
+
+
+
+
+fabric-ca-client register --id.name peer2.PayBF.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.PayBF" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer2.PayBF.fabrichain.com --csr.hosts=['peer2.PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/msp -u http://PayBFca:123456@localhost:7056 --home ca-client
+
+fabric-ca-client enroll -u http://peer2.PayBF.fabrichain.com:123456@localhost:7056 --csr.cn=peer2.PayBF.fabrichain.com --csr.hosts=['peer2.PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/msp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/msp/admincerts
+
+
+
+fabric-ca-client register --id.name peer3.PayBF.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.PayBF" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer3.PayBF.fabrichain.com --csr.hosts=['peer3.PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/msp -u http://PayBFca:123456@localhost:7056 --home ca-client
+
+fabric-ca-client enroll -u http://peer3.PayBF.fabrichain.com:123456@localhost:7056 --csr.cn=peer3.PayBF.fabrichain.com --csr.hosts=['peer3.PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/msp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/users/Admin@PayBF.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/msp/admincerts
+
+
+
+fabric-ca-client register --id.name peer2.PayBF.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.PayBF" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer2.PayBF.fabrichain.com --csr.hosts=['peer2.PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://peer2.PayBF.fabrichain.com:123456@localhost:8056 --csr.cn=peer2.PayBF.fabrichain.com --csr.hosts=['peer2.PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/tlstmp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/tls
+
+cp PayBFcatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/tls/server.crt
+
+
+path=ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer2.PayBF.fabrichain.com/tls/server.key
+
+
+
+fabric-ca-client register --id.name peer3.PayBF.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.PayBF" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer3.PayBF.fabrichain.com --csr.hosts=['peer3.PayBF.fabrichain.com'] -M crypto-config/peerOrganizations/PayBF.fabrichain.com/tlstmp -u http://PayBFca:123456@localhost:8056 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://peer3.PayBF.fabrichain.com:123456@localhost:8056 --csr.cn=peer3.PayBF.fabrichain.com --csr.hosts=['peer3.PayBF.fabrichain.com']  -M crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/tlstmp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/tls
+
+cp PayBFcatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/tls/server.crt
+
+
+path=ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+
+
+cp ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/PayBF.fabrichain.com/peers/peer3.PayBF.fabrichain.com/tls/server.key
+
+
+
+
+
+
+
+fabric-ca-client register --id.name peer2.51n.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.51n" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer2.51n.fabrichain.com --csr.hosts=['peer2.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+
+fabric-ca-client enroll -u http://peer2.51n.fabrichain.com:123456@localhost:7057 --csr.cn=peer2.51n.fabrichain.com --csr.hosts=['peer2.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/msp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/msp/admincerts
+
+
+
+
+fabric-ca-client register --id.name peer3.51n.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.51n" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer3.51n.fabrichain.com --csr.hosts=['peer3.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+
+fabric-ca-client enroll -u http://peer3.51n.fabrichain.com:123456@localhost:7057 --csr.cn=peer3.51n.fabrichain.com --csr.hosts=['peer3.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/msp --home ca-client
+
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/Admin@51n.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/msp/admincerts
+
+
+
+
+fabric-ca-client register --id.name peer2.51n.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.51n" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer2.51n.fabrichain.com --csr.hosts=['peer2.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://peer2.51n.fabrichain.com:123456@localhost:8057 --csr.cn=peer2.51n.fabrichain.com --csr.hosts=['peer2.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/tls
+
+cp 51ncatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/tls/server.crt
+
+path=ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer2.51n.fabrichain.com/tls/server.key
+
+
+
+
+fabric-ca-client register --id.name peer3.51n.fabrichain.com --id.type peer --id.affiliation "com.fabrichain.51n" --id.attrs '"role=peer",ecert=true' --id.secret=123456 --csr.cn=peer3.51n.fabrichain.com --csr.hosts=['peer3.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://peer3.51n.fabrichain.com:123456@localhost:8057 --csr.cn=peer3.51n.fabrichain.com --csr.hosts=['peer3.51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/tlstmp --home ca-client
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/tls
+
+cp 51ncatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/tls/server.crt
+
+path=ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/peers/peer3.51n.fabrichain.com/tls/server.key
+
+
+
+
+
+
+
+fabric-ca-client register --id.name User1@51n.fabrichain.com --id.type client --id.affiliation "com.fabrichain.51n" --id.attrs '"hf.Registrar.Roles=client,orderer,peer,user","hf.Registrar.DelegateRoles=client,orderer,peer,user",hf.Registrar.Attributes=*,hf.GenCRL=true,hf.Revoker=true,hf.AffiliationMgr=true,hf.IntermediateCA=true,role=client:ecert' --id.secret=123456 --csr.cn=51n.fabrichain.com --csr.hosts=['51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/msp -u http://51nca:123456@localhost:7057 --home ca-client
+
+fabric-ca-client enroll -u http://User1@51n.fabrichain.com:123456@localhost:7057 --csr.cn=51n.fabrichain.com --csr.hosts=['51n.fabrichain.com']  -M crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/msp --home ca-client
+
+mkdir -p ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/msp/admincerts
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/msp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/msp/admincerts
+
+
+
+
+fabric-ca-client register --id.name User1@51n.fabrichain.com --id.type client --id.affiliation "com.fabrichain.51n" --id.attrs '"hf.Registrar.Roles=client,orderer,peer,user","hf.Registrar.DelegateRoles=client,orderer,peer,user",hf.Registrar.Attributes=*,hf.GenCRL=true,hf.Revoker=true,hf.AffiliationMgr=true,hf.IntermediateCA=true,role=client:ecert' --id.secret=123456 --csr.cn=51n.fabrichain.com --csr.hosts=['51n.fabrichain.com'] -M crypto-config/peerOrganizations/51n.fabrichain.com/tlstmp -u http://51nca:123456@localhost:8057 --home ca-client
+
+
+fabric-ca-client enroll -d --enrollment.profile tls -u http://User1@51n.fabrichain.com:123456@localhost:8057 --csr.cn=51n.fabrichain.com --csr.hosts=['51n.fabrichain.com']  -M crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/tlstmp --home ca-client
+
+
+mkdir ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/tls  -p
+
+cp 51ncatls-server/ca-chain.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/tls/ca.crt
+
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/tlstmp/signcerts/cert.pem ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/tls/client.crt
+
+
+path=ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/tlstmp/keystore
+keystore=`ls -l $path | tail -n 1 | awk '{print $9}'`
+cp ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/tlstmp/keystore/$keystore ca-client/crypto-config/peerOrganizations/51n.fabrichain.com/users/User1@51n.fabrichain.com/tls/client.key
+
+
+
+
+
+
+
+
+
+
+

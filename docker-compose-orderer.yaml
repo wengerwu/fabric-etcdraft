@@ -1,0 +1,39 @@
+version: '2'
+volumes:
+  orderer.pbfchain.com:
+services:
+  orderer.pbfchain.com:
+    container_name: orderer.pbfchain.com
+    image: hyperledger/fabric-orderer:latest
+    environment:
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=paybf_default
+      - GODEBUG=netdns=go
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_KAFKA_TOPIC_REPLICATIONFACTOR=1
+      - ORDERER_KAFKA_VERBOSE=true
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    networks:
+      default:
+        aliases:
+          - paybf
+    volumes:
+      - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ./ca-client/crypto-config/ordererOrganizations/pbfchain.com/orderers/orderer.pbfchain.com/msp:/var/hyperledger/orderer/msp
+      - ./ca-client/crypto-config/ordererOrganizations/pbfchain.com/orderers/orderer.pbfchain.com/tls/:/var/hyperledger/orderer/tls
+      - /var/hyperledger/orderer:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+

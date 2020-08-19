@@ -1,0 +1,19 @@
+version: '2'
+networks:
+  fabric-ca:
+services:
+  orderstls:
+    container_name: orderstls
+    image: hyperledger/fabric-ca:latest
+    command: sh -c 'fabric-ca-server start -d -b ordersca:iamFengWu5523783 --cfg.affiliations.allowremove --cfg.identities.allowremove --port 8055'
+    environment:
+      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+      - FABRIC_CA_SERVER_CSR_HOSTS=0.0.0.0
+      - FABRIC_CA_SERVER_DEBUG=true
+    volumes:
+      - ./orderstls-server:/etc/hyperledger/fabric-ca-server
+    networks:
+      - fabric-ca
+    ports:
+      - 8055:8055

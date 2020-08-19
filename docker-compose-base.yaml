@@ -1,0 +1,59 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+  peer0.PayBF.pbfchain.com:
+    container_name: peer0.PayBF.pbfchain.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-PayBF0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=PayBF0
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=    
+      - CORE_PEER_ID=peer0.PayBF.pbfchain.com
+      - CORE_PEER_ADDRESS=peer0.PayBF.pbfchain.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.PayBF.pbfchain.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.PayBF.pbfchain.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.PayBF.pbfchain.com:7051
+      - CORE_PEER_LOCALMSPID=PayBFMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./ca-client/crypto-config/peerOrganizations/PayBF.pbfchain.com/peers/peer0.PayBF.pbfchain.com/msp:/etc/hyperledger/fabric/msp
+        - ./ca-client/crypto-config/peerOrganizations/PayBF.pbfchain.com/peers/peer0.PayBF.pbfchain.com/tls:/etc/hyperledger/fabric/tls
+        - /var/hyperledger/PayBFPeer0:/var/hyperledger/production
+    ports:
+      - 7051:7051
+
+  peer0.51n.pbfchain.com:
+    container_name: peer0.51n.pbfchain.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-51n0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=51n0
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=   
+      - CORE_PEER_ID=peer0.51n.pbfchain.com
+      - CORE_PEER_ADDRESS=peer0.51n.pbfchain.com:8051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.51n.pbfchain.com:8052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.51n.pbfchain.com:8051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.51n.pbfchain.com:8051
+      - CORE_PEER_LOCALMSPID=51nMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./ca-client/crypto-config/peerOrganizations/51n.pbfchain.com/peers/peer0.51n.pbfchain.com/msp:/etc/hyperledger/fabric/msp
+        - ./ca-client/crypto-config/peerOrganizations/51n.pbfchain.com/peers/peer0.51n.pbfchain.com/tls:/etc/hyperledger/fabric/tls
+        - /var/hyperledger/51nPeer0:/var/hyperledger/production
+    ports:
+      - 8051:8051
