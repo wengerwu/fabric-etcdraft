@@ -5,7 +5,7 @@ services:
   ordersca:
     container_name: ordersca
     image: hyperledger/fabric-ca:latest
-    command: sh -c 'fabric-ca-server start -d -b ordersca:iamFengWu5523783 --cfg.affiliations.allowremove --cfg.identities.allowremove --port 7055'
+    command: sh -c 'fabric-ca-server start -d -b ordersca:123456 --cfg.affiliations.allowremove --cfg.identities.allowremove --port 7055'
     environment:
       - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_TLS_ENABLED=false

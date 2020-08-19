@@ -5,7 +5,7 @@ services:
   rootca:
     container_name: rootca
     image: hyperledger/fabric-ca:latest
-    command: sh -c 'fabric-ca-server start -d -b rootca:iamFengWu5523783--cfg.affiliations.allowremove --cfg.identities.allowremove --port 7054'
+    command: sh -c 'fabric-ca-server start -d -b rootca:123456--cfg.affiliations.allowremove --cfg.identities.allowremove --port 7054'
     environment:
       - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_TLS_ENABLED=false
