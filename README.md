@@ -1,8 +1,8 @@
-Build and run a Hyperledger Fabric network with the Raft ordering service.
+# Build and run a Hyperledger Fabric network with the Raft ordering service.
 
-fabric-etcdraft  
+# fabric-etcdraft  
 Docker deploys fabric network on etcdraft consensus protocol. 
-Raft Consensus
+# Raft Consensus
 Designed as an alternative consensus algorithm to Paxos, Raft is much easier to understand, 
 and is now used in some of the most successful software projects, such as Docker. 
 Since the start of Hyperledger Fabric, consensus has been designed as pluggable
@@ -13,7 +13,7 @@ Since the start of Hyperledger Fabric, consensus has been designed as pluggable
  This code pattern will help you understand how to build and deploy a smart contract onto a Hyperledger Fabric network running Raft,
  and enable you to test the tolerance of the network by stopping and starting some of the ordering nodes.
 
-Featured technologies:
+# Featured technologies:
 
 1、Hyperledger Fabric v1.4.4 is a platform for distributed ledger solutions, 
 underpinned by a modular architecture that delivers high degrees of confidentiality, 
@@ -23,7 +23,7 @@ resiliency, flexibility, and scalability.
 in packages called containers. Containers are isolated from one another and bundle their own software, 
 libraries and configuration files; they can communicate with each other through well-defined channels.
 
-Prerequisites
+# Prerequisites
 1、Hyperledger Fabric 1.4 prerequisites
 
 2、Tested on centos7.7
@@ -38,8 +38,5 @@ Prerequisites
 Based on Fabric CA, which is a Certificate Authority for Hyperledger Fabric.
 Guide for Fabric CA: https://github.com/hyperledger/fabric-ca
 More details about Hyperledger Fabric: https://github.com/hyperledger/fabric  
-### Docker
-Docker is a set of platform as a service products that use OS-level virtualization to deliver software in packages called containers. Containers are isolated from one another and bundle their own software, libraries and configuration files; they can communicate with each other through well-defined channels. More details about Docker: https://www.docker.com/  
-
 ## Initialize
 Fabirc-ca build up certification of org, orderer etc, then write configuration files. Files will be passed to docker for deliver.
